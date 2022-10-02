@@ -42,11 +42,20 @@ class TodosDB {
 
   async add(todo) {
     const data = await DB.getData();
-    data.todos.push(todo);
+
+    const newTodo = {
+      ...todo,
+      id: uuidv4(),
+      completed: false,
+      createAt: Date.now(),
+      updatedAt: null,
+    };
+
+    data.todos.push(newTodo);
 
     await DB.writeData(data);
 
-    return todo;
+    return newTodo;
   }
 
   async update(todoId, todo) {
@@ -109,18 +118,10 @@ class Todos {
   }
 
   async createTodo(todo) {
-    let newTodo;
+    let validatedTodo;
 
     try {
-      const validatedTodo = await this.createTodoSchema.validate(todo, { abortEarly: false });
-
-      newTodo = {
-        ...validatedTodo,
-        id: uuidv4(),
-        completed: false,
-        createAt: Date.now(),
-        updatedAt: null,
-      };
+      validatedTodo = await this.createTodoSchema.validate(todo, { abortEarly: false });
     } catch (err) {
       return {
         message: "validation error",
@@ -128,7 +129,7 @@ class Todos {
       };
     }
 
-    await this.todosDB.add(newTodo);
+    const newTodo = await this.todosDB.add(validatedTodo);
     return newTodo;
   }
 
