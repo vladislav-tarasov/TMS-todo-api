@@ -21,7 +21,7 @@ class DB {
   }
 }
 
-class TodosDB {
+class TodosModel {
   async get({ title, completed, limit } = {}) {
     let { todos = [] } = await DB.getData();
 
@@ -96,7 +96,7 @@ class TodosDB {
 }
 
 class Todos {
-  todosDB = new TodosDB();
+  todosModel = new TodosModel();
 
   createTodoSchema = yup.object({
     title: yup.string().required("title required").max(20, "max length 20"),
@@ -114,7 +114,7 @@ class Todos {
   }
 
   async getTodos(query) {
-    return this.todosDB.get(query);
+    return this.todosModel.get(query);
   }
 
   async createTodo(todo) {
@@ -123,13 +123,13 @@ class Todos {
     try {
       validatedTodo = await this.createTodoSchema.validate(todo, { abortEarly: false });
     } catch (err) {
-      return {
+      throw Error({
         message: "validation error",
         data: Todos.formatValidationError(err),
-      };
+      });
     }
 
-    const newTodo = await this.todosDB.add(validatedTodo);
+    const newTodo = await this.todosModel.add(validatedTodo);
     return newTodo;
   }
 
@@ -139,20 +139,20 @@ class Todos {
     try {
       validatedTodo = await this.updateTodoSchema.validate(todo, { abortEarly: false });
     } catch (err) {
-      return {
+      throw Error({
         message: "validation error",
         data: Todos.formatValidationError(err),
-      };
+      });
     }
 
-    const updatedTodo = await this.todosDB.update(todoId, validatedTodo);
+    const updatedTodo = await this.todosModel.update(todoId, validatedTodo);
     return updatedTodo;
   }
 
   async deleteTodo(todoId) {
-    const deletedTodo = await this.todosDB.delete(todoId);
+    const deletedTodo = await this.todosModel.delete(todoId);
     return deletedTodo;
   }
 }
 
-module.exports = { todosDB: new Todos(), DB };
+module.exports = { todosModel: new Todos(), DB };
