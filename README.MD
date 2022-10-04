@@ -36,6 +36,17 @@ fetch("http://localhost:8080/api/todo/list?limit=3&title=title&completed=true")
 
 ***
 
+`GET` `http://localhost:8080/api/todo/count`
+
+```js
+fetch("http://localhost:8080/api/todo/count")
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((err) => console.log(err));
+```
+
+***
+
 `POST` `http://localhost:8080/api/todo/create`
 
 ```js
@@ -81,7 +92,7 @@ fetch("http://localhost:8080/api/todo/update/:id", {
 
 ***
 
-`DELETE` `http://localhost:8080/api/todo/update/:id`
+`DELETE` `http://localhost:8080/api/todo/delete/:id`
 
 ```js
 fetch("http://localhost:8080/api/todo/delete/:id", {
