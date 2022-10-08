@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api/todo", require("./routes/todo"));
+app.use("/api/auth", require("./routes/auth"));
 
 const port = process.env.PORT || 8080;
 
